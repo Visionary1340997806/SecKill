@@ -1,0 +1,499 @@
+package com.hengsheng.intellectconference.activity;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.TableLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.hengsheng.intellectconference.R;
+import com.hengsheng.intellectconference.bean.CustomUpdateParser;
+import com.hengsheng.intellectconference.bean.EventBean;
+import com.hengsheng.intellectconference.bean.MeetingInfo.MeetingInfoBean;
+import com.hengsheng.intellectconference.bean.SignUserBean;
+import com.hengsheng.intellectconference.dialog.CDKDialog;
+import com.hengsheng.intellectconference.dialog.HandWriteSignDialog;
+import com.hengsheng.intellectconference.dialog.LoginDialog;
+import com.hengsheng.intellectconference.dialog.MyFloatDialog;
+import com.hengsheng.intellectconference.dialog.NormalDialog;
+import com.hengsheng.intellectconference.dialog.SignDialog;
+import com.hengsheng.intellectconference.dialog.WaitDialog;
+import com.hengsheng.intellectconference.http.AppBus;
+import com.hengsheng.intellectconference.http.JsonUtil;
+import com.hengsheng.intellectconference.http.NetCommonDefine;
+import com.hengsheng.intellectconference.util.AppUtils;
+import com.hengsheng.intellectconference.util.EasyText;
+import com.hengsheng.intellectconference.util.GlobalData;
+import com.hengsheng.intellectconference.util.SharePerfenceUtils;
+import com.hengsheng.intellectconference.util.SocketService;
+import com.hengsheng.intellectconference.util.ToastHelper;
+import com.xuexiang.xupdate.XUpdate;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+
+
+/**
+ * Created by yjf
+ * on 2020/7/31
+ */
+public class SplashActivity extends BaseActivity {
+    private static final String TAG = "SplashActivity";
+
+    private EasyText mEnterMeeting;
+    private TextView mMeetingName, mMeetingMan, mMeetingRoom, mMeetingHost, mMeetingSecr, mMeetingStart;
+    private int allUser = 0, signUser = 0;
+    private HandWriteSignDialog dialog;
+    private SignDialog dialog1;
+    private CDKDialog dialog2;
+    private LoginDialog dialog3;
+    private int REQUEST_CODE = 8855;
+    private String signPath;
+    private boolean isIdConf = false;
+    private String CDK;
+    private String uuid;
+    private final int permissionCode = 888;
+    private String[] permissions = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.INTERNET
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void EventBus(EventBean bean) {
+        switch (bean.getMessage()) {
+            case "GETDEVICE_SUCC":
+                break;
+            case "GETDEVICE_FAIL":
+                ToastHelper.showToast(this, "获取设备号失败：" + bean.getTips(), 0);
+                break;
+            case "GETMEETING_FAIL":
+                ToastHelper.showToast(this, "获取会议列表失败：" + bean.getTips(), 0);
+                break;
+            case "GETMEETING_SUCC":
+                if(dialog3 != null && dialog3.isShowing()){
+                    dialog3.showMeeting(GlobalData.getInstance().getMeetingList());
+                }
+                break;
+            case "LOGIN_FAIL":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(this, "登录失败，账号密码错误", 0);
+                break;
+            case "LOGIN_SUCCESS":
+                WaitDialog.CancelWaitDialog();
+                AppBus.getMeeting(GlobalData.getInstance().getUserInfoBean().getUser_id());
+                break;
+            case "MEETINGINFO_FAIL":
+                ToastHelper.showToast(this, "请设置正确的设备信息！", 0);
+                break;
+            case "MEETINGINFO_SUCCESS":
+                WaitDialog.CreateWaitDialog(this,R.string.str_loading,true,false);
+                int type = GlobalData.getInstance().getStatusBean().getLoginType();
+                if(type == 0){
+                    GlobalData.getInstance().getStatusBean().setMeetingID(
+                            String.valueOf(GlobalData.getInstance().getMeetingInfoBean().getUser().getMeeting_id()));
+                    }
+                EventBus.getDefault().post(new EventBean("POSTINFO","POSTINFO"));
+                break;
+            case "LOGINTYPE_SUCCESS":
+                int type1 = GlobalData.getInstance().getStatusBean().getLoginType();
+                if(type1 == 0){
+                    String ip = SharePerfenceUtils.getInstance().getString("ip", "ip");
+                    String deviceNum = SharePerfenceUtils.getInstance().getString("deviceNum", "deviceNum");
+                    if (ip.equals("ip") || deviceNum.equals("deviceNum")) {
+                        return;
+                    }
+                    AppBus.getMeetingInfo(deviceNum,ip);
+                }else if(type1 == 1){
+                    showLoginDialog();
+                }else if(type1 == 2){
+                    showLoginDialog();
+                }
+                break;
+            case "LOGINTYPE_FAIL":
+                ToastHelper.showToast(this, "登录方式获取失败：" + bean.getTips(), 0);
+                break;
+            case "AGENDAINFO_SUCCESS":
+                break;
+            case "AGENDAINFO_FAIL":
+                ToastHelper.showToast(this, bean.getTips(), 0);
+                break;
+            case "SOCKETCONN_SUCC":
+                if (bean.getTips().equals("IDCONF")) {
+                    isIdConf = true;
+                    WaitDialog.CancelWaitDialog();
+                } else {
+                    isIdConf = false;
+                    if(settingDialog != null && settingDialog.isShowing()){
+                        settingDialog.dismiss();
+                    }
+                    if(dialog3 != null && dialog3.isShowing()){
+                        dialog3.dismiss();
+                    }
+                    GlobalData data = GlobalData.getInstance();
+                    MeetingInfoBean bean1 = data.getMeetingInfoBean();
+                    mMeetingName.setText(bean1.getName());
+                    mMeetingStart.setText(dateToString(bean1.getStartTime().toString()));
+                    mMeetingRoom.setText(bean1.getRoom_id());
+                    mMeetingHost.setText(bean1.getMeetingHost());
+                    mMeetingSecr.setText(bean1.getSecretary());
+                    mMeetingMan.setText(bean1.getUser().getUsername());
+                    data.getStatusBean().setHandPz(bean1.getUser().isHandPainted());
+                    data.getStatusBean().setWhitePz(bean1.getUser().isWhiteboard());
+                    data.getStatusBean().setExport(bean1.getUser().isExport());
+                    AppBus.getAllUserInfo();
+                    WaitDialog.CancelWaitDialog();
+                }
+                break;
+            case "SOCKETCONN_FAIL":
+                WaitDialog.CancelWaitDialog();
+                break;
+            case "SIGNUSER_SUCCESS":
+                SignUserBean signUserBean = JsonUtil.jsonToObject(bean.getTips(), SignUserBean.class);
+                if (signUserBean != null) {
+                    SignUserBean.Sign sign = signUserBean.getData();
+                    if (dialog != null) {
+                        dialog.setNum(String.valueOf(sign.getAllUser()));
+                        dialog.setSignNum(String.valueOf(sign.getSignUser()));
+                    }
+                    if (dialog1 != null) {
+                        dialog1.setNum(String.valueOf(sign.getAllUser()));
+                        dialog1.setSignNum(String.valueOf(sign.getSignUser()));
+                    }
+                }
+                break;
+            case "SIGNUSER_FAIL":
+                ToastHelper.showToast(this, "签到人员信息获取失败。。。" + bean.getTips(), 0);
+                break;
+            case "UPLOADSIGN_FAIL":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(this, "签到失败。。。" + bean.getTips(), 0);
+                break;
+            case "UPLOADSIGN_SUCCESS":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(this, "签到成功", 0);
+                GlobalData.getInstance().getStatusBean().setSign(true);
+                gotoMainActivity();
+                break;
+            case "UPLOADSIGNIMG_SUCCESS":
+                WaitDialog.CancelWaitDialog();
+                AppUtils.deleteFile(bean.getTips());
+                ToastHelper.showToast(this, "签到成功", 0);
+                GlobalData.getInstance().getStatusBean().setSign(true);
+                gotoMainActivity();
+                break;
+            case "SHOWBIAOYUS":
+                Intent intent2 = new Intent(SplashActivity.this, BiaoyuActivity.class);
+                intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent2.putExtra("isWelcome", "true");
+                startActivity(intent2);
+                break;
+            case "UPCDK_SUCCESS":
+                String str1 = md5(CDK + "02gd4" + uuid).substring(8, 16);
+                Log.i(TAG, "uploadCDK: " + bean.getTips() + " " + str1);
+                if (str1.equals(bean.getTips())) {
+                    SharedPreferences sp = getSharedPreferences("activation", MODE_PRIVATE);//创建对象，
+                    SharedPreferences.Editor editor = sp.edit();//获取编辑对象
+                    editor.putString("uuid", uuid);
+                    editor.putString("cdk", CDK);
+                    editor.apply();//提交保存修改
+                    ToastHelper.showToast(this, "激活成功", 0);
+                    if (dialog2 != null && dialog2.isShowing()) {
+                        dialog2.dismiss();
+                    }
+                }
+                break;
+            case "UPCDK_FAIL":
+                ToastHelper.showToast(this, "激活失败。。。" + bean.getTips(), 0);
+                break;
+            case "CLOSEMEETING":
+                ToastHelper.showToast(this, "会议关闭", 0);
+                break;
+            case "DOWNLOADIMAGE":
+                if(bean.getTips().equals("fail")){
+                    break;
+                }else {
+                    setImg(bean.getTips());
+                    break;
+                }
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        setContentLayout(R.layout.activity_splash);
+        checkPermission();
+        showDialogNormal();
+//        checkSDK();
+        initUpdate();
+        initView();
+    }
+
+    private void initView() {
+        setBaseListener(true);
+        mEnterMeeting = findViewById(R.id.bt_meeting_enter);
+        mMeetingHost = findViewById(R.id.tv_meeting_host2);
+        mMeetingMan = findViewById(R.id.tv_meeting_man);
+        mMeetingName = findViewById(R.id.tv_meeting_name);
+        mMeetingRoom = findViewById(R.id.tv_meeting_room2);
+        mMeetingSecr = findViewById(R.id.tv_meeting_secr2);
+        mMeetingStart = findViewById(R.id.tv_meeting_start2);
+        setListener();
+        if (!GlobalData.getInstance().getStatusBean().isSign()) {
+            if(SharePerfenceUtils.getInstance().getString("bg_path","bg_path").equals("bg_path")){
+                bg.setImageResource(R.drawable.bg_lishui);
+            }else {
+                Log.i(TAG, "initView: " + SharePerfenceUtils.getInstance().getString("bg_path","bg_path"));
+                setImg(SharePerfenceUtils.getInstance().getString("bg_path","bg_path"));
+            }
+            String ip = SharePerfenceUtils.getInstance().getString("ip", "ip");
+            String port = SharePerfenceUtils.getInstance().getString("port", "port");
+            if (ip.equals("ip") || port.equals("port")) {
+                ToastHelper.showToast(this,"连接错误，IP和端口设置为空",0);
+                return;
+            }
+            if (isServiceRunning("com.hengsheng.intellectconference.util.SocketService")) {
+                Intent intent = new Intent(this, SocketService.class);
+                stopService(intent);
+            }
+            Intent intent = new Intent(getApplicationContext(), SocketService.class);
+            intent.putExtra("ip", ip);
+            intent.putExtra("port", port);
+            startService(intent);
+        }
+        else {
+            GlobalData data = GlobalData.getInstance();
+            if(data.getStatusBean().getBackground_path() != null){
+                setImg(data.getStatusBean().getBackground_path());
+            }
+            if(data.getStatusBean().getLogo_path() != null){
+                setImg(data.getStatusBean().getLogo_path());
+            }
+            MeetingInfoBean bean1 = data.getMeetingInfoBean();
+            mMeetingName.setText(bean1.getName());
+            mMeetingStart.setText(dateToString(bean1.getStartTime().toString()));
+            mMeetingRoom.setText(bean1.getRoom_id());
+            mMeetingHost.setText(bean1.getMeetingHost());
+            mMeetingSecr.setText(bean1.getSecretary());
+            mMeetingMan.setText(bean1.getUser().getUsername());
+        }
+    }
+
+    private void showLoginDialog(){
+        dialog3 = new LoginDialog(this, (id, pwd) -> {
+            if(TextUtils.isEmpty(id) || TextUtils.isEmpty(pwd)){
+                return;
+            }else {
+                String ip = SharePerfenceUtils.getInstance().getString("ip", "ip");
+                if (ip.equals("ip")) {
+                    String e = "getLogin onFailure: ip为空";
+                    dialog3.dismiss();
+                    Log.d(TAG, e);
+                    return;
+                }
+                WaitDialog.CreateWaitDialog(this,R.string.str_loading,true,false);
+                AppBus.login(ip,id,pwd);
+            }
+        },false).shown();
+        if (dialog3.getWindow() != null) {
+            WindowManager.LayoutParams dialogParams = dialog3.getWindow().getAttributes();
+            dialogParams.gravity = Gravity.CENTER;
+            dialogParams.width = (int) (this.getResources().getDisplayMetrics().widthPixels * 0.67);
+            dialogParams.height = (int) (dialogParams.width * 0.618);
+            dialogParams.dimAmount = 0.3f;
+            dialog3.getWindow().setAttributes(dialogParams);
+            dialog3.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
+    private void setImg(String path) {
+        Log.i(TAG, "setImg: " + path);
+        if(path.contains("prebg")){
+            if(AppUtils.fileIsExists(path)){
+                bg.setImageURI(Uri.fromFile(new File(path)));
+            }
+        }else if(path.contains("background")){
+            if(AppUtils.fileIsExists(path)){
+                bg.setImageURI(Uri.fromFile(new File(path)));
+            }
+        }else if(path.contains("logo")) {
+            if (AppUtils.fileIsExists(path)) {
+                logo.setImageURI(Uri.fromFile(new File(path)));
+            }
+        }
+    }
+
+    //检查权限
+    private void checkPermission() {
+        List<String> permissionList = new ArrayList<>();
+        for (int i = 0; i < permissions.length; i++) {
+            if (ContextCompat.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                permissionList.add(permissions[i]);
+            }
+        }
+        if (permissionList.size() <= 0) {
+            //说明权限都已经通过，可以做你想做的事情去
+
+        } else {
+            //存在未允许的权限
+            ActivityCompat.requestPermissions(this, permissions, permissionCode);
+        }
+    }
+
+    private void checkSDK() {
+        SharedPreferences sp = getSharedPreferences("activation", MODE_PRIVATE);//创建对象，
+        String cdk = sp.getString("cdk", "false");
+        String uuid = sp.getString("uuid", "false");
+        Log.i(TAG, "checkSDK1: " + uuid + cdk);
+        if (cdk == null || uuid == null) {
+            showSDKdialog();
+        } else if (cdk.equals("false") || uuid.equals("false")) {
+            showSDKdialog();
+        } else {
+            Log.i(TAG, "checkSDK1: " + uuid + cdk);
+        }
+
+    }
+
+    private void showSDKdialog() {
+        dialog2 = new CDKDialog(this, cdk -> {
+            uuid = UUID.randomUUID().toString();
+            String str = md5(cdk + "02gd4" + uuid).substring(0, 8);
+            CDK = cdk;
+            AppBus.uploadCDK(cdk, uuid, str);
+        }).shown();
+        if (dialog2.getWindow() != null) {
+            WindowManager.LayoutParams dialogParams = dialog2.getWindow().getAttributes();
+            dialogParams.gravity = Gravity.CENTER;
+            dialogParams.width = (int) (this.getResources().getDisplayMetrics().widthPixels * 0.5);
+            dialogParams.dimAmount = 0.3f;
+            dialog2.getWindow().setAttributes(dialogParams);
+            dialog2.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
+
+    @NonNull
+    public static String md5(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return "";
+        }
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(string.getBytes());
+            StringBuilder result = new StringBuilder();
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result.append(temp);
+            }
+            return result.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    @NonNull
+    public static String md5(String string, String slat) {
+        if (TextUtils.isEmpty(string)) {
+            return "";
+        }
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest((string + slat).getBytes());
+            StringBuilder result = new StringBuilder();
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result.append(temp);
+            }
+            return result.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+    private void initUpdate() {
+        String ip = SharePerfenceUtils.getInstance().getString("ip", "ip");
+        if (ip.equals("ip")) {
+            String e = "initUpdate onFailure: 设备ip为空";
+            WaitDialog.CancelWaitDialog();
+            Log.d(TAG, e);
+            return;
+        }
+        String url = NetCommonDefine.HTTP + ip + NetCommonDefine.MAIN_URL + NetCommonDefine.UPDATE_VERSION;
+        Log.i(TAG, "initUpdate: " + url);
+        XUpdate.newBuild(this)
+                .updateUrl(url)
+                .promptWidthRatio(0.7F)
+                .apkCacheDir(NetCommonDefine.FILE_PATH)
+//                .promptTopResId(R.mipmap.update_top)
+//                .promptThemeColor(ContextCompat.getColor(this,R.color.blues))
+//                .promptButtonTextColor(ContextCompat.getColor(this,R.color.whitePaper))
+                .updateParser(new CustomUpdateParser())
+                .update();
+
+        XUpdate.get().setILogger((priority, tag, message, t) -> {
+            //实现日志记录功能
+        });
+    }
+
+    protected void checkOverlayPermission() {
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+        List<ResolveInfo> infos = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (infos == null || infos.isEmpty()) {
+
+        }
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    private void showDialogNormal() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES

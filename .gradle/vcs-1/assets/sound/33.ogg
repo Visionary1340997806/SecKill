@@ -1,0 +1,356 @@
+package com.hengsheng.intellectconference.fragment;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.hengsheng.intellectconference.R;
+import com.hengsheng.intellectconference.activity.PdfActivity;
+import com.hengsheng.intellectconference.adapter.TopicResAdapter;
+import com.hengsheng.intellectconference.bean.EventBean;
+import com.hengsheng.intellectconference.bean.TopicArr.TopicBean;
+import com.hengsheng.intellectconference.bean.TopicResBean;
+import com.hengsheng.intellectconference.http.AppBus;
+import com.hengsheng.intellectconference.http.NetCommonDefine;
+import com.hengsheng.intellectconference.util.AppUtils;
+import com.hengsheng.intellectconference.util.FileUtils;
+import com.hengsheng.intellectconference.util.GlobalData;
+import com.hengsheng.intellectconference.util.SharePerfenceUtils;
+import com.hengsheng.intellectconference.util.ToastHelper;
+import com.hengsheng.intellectconference.dialog.WaitDialog;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.hengsheng.intellectconference.util.AppUtils.getMimeType;
+import static com.hengsheng.intellectconference.util.AppUtils.getUploadName;
+
+/**
+ * Created by yjf
+ * on 2020/8/3
+ */
+public class TopicResFragment extends BaseFragment {
+    private static final String TAG = "TopicResFragment";
+    private View mView;
+    private Button res_all, res_word, res_image, res_video, res_other;
+    private RecyclerView recyclerView;
+    private TopicResAdapter topicResAdapter;
+    private ArrayList<TopicResBean> resList = new ArrayList<>();
+    private int topicID = 0;
+    private ArrayList<Integer> type = new ArrayList<>();
+    private static final int MIN_CLICK_DELAY_TIME = 300;
+    private static long lastClickTime = System.currentTimeMillis();
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void EventBus(EventBean bean) {
+        switch (bean.getMessage()) {
+            case "TOPIC_SUCCESS":
+                if (GlobalData.getInstance().getTopicList().size() < 1) {
+                    WaitDialog.CancelWaitDialog();
+                } else {
+                    addTopicview();
+                }
+                break;
+            case "DOWNLOADFILE_FAIL":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(getContext(), "加载文件失败，请检查网络或ip是否有误", 0);
+                break;
+            case "DOWNLOADFILE_SUCCESS":
+                WaitDialog.CancelWaitDialog();
+                if (bean.getTips().equals("pdf") && getContext() != null) {
+                    String path = GlobalData.getInstance().getFileSimpleBean().getPath();
+                    Intent intent = new Intent(getContext(), PdfActivity.class);
+                    intent.putExtra("pdfpath", path);
+                    getContext().startActivity(intent);
+                } else {
+                    openFile(false);
+                    Log.i(TAG, "EventBus: 2");
+                }
+                break;
+            case "DOWNLOADFILE_WRITE_SUCCESS":
+                WaitDialog.CancelWaitDialog();
+                openFile(true);
+                break;
+            case "TOPIC_FAIL":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(getContext(), bean.getTips(), 0);
+                break;
+            case "UPLOADSUMM_SUCCESS2":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(getContext(), "上传成功！", 0);
+                break;
+            case "UPLOADSUMM_FAIL2":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(getContext(), "上传失败..." + bean.getTips(), 0);
+                break;
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (mView == null) {
+            mView = inflater.inflate(R.layout.fragment_topic_res, container, false);
+            EventBus.getDefault().register(this);
+            initView();
+        } else {
+            ViewGroup parent = (ViewGroup) mView.getParent();
+            if (parent != null) {
+                parent.removeView(mView);
+            }
+        }
+
+        return mView;
+    }
+
+
+    private void initView() {
+        res_all = mView.findViewById(R.id.bt_res_all);
+        res_word = mView.findViewById(R.id.bt_res_word);
+        res_image = mView.findViewById(R.id.bt_res_image);
+        res_video = mView.findViewById(R.id.bt_res_video);
+        res_other = mView.findViewById(R.id.bt_res_other);
+        recyclerView = mView.findViewById(R.id.rv_res_list);
+        topicResAdapter = new TopicResAdapter(getContext(), resList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setItemAnimator(null);
+        recyclerView.setAdapter(topicResAdapter);
+        isNeedFresh();
+        res_all.setActivated(true);
+        setListener();
+    }
+
+    private void setRecyclerView() {
+        Log.i(TAG, "setRecyclerView: " + type.get(0));
+        resList.addAll(GlobalData.getInstance().getTopicList().get(type.get(0)).getFiles());
+        topicResAdapter.notifyDataSetChanged();
+        WaitDialog.CancelWaitDialog();
+        topicResAdapter.OnReadClickListener((view, url, fileName, suf) -> {
+            if (!isFast()) return;
+            if (getContext() != null) {
+                String path = NetCommonDefine.PIZHU_PATH + File.separator + topicID + File.separator + fileName;
+                if (AppUtils.fileIsExists(path)) {
+                    if (suf.contains("pdf")) {
+                        Intent intent = new Intent(getContext(), PdfActivity.class);
+                        intent.putExtra("pdfpath", path);
+                        getContext().startActivity(intent);
+                    } else {
+                        openAndroidFile(path, getContext(), false);
+                    }
+                } else {
+                    WaitDialog.CreateWaitDialog(getContext(), R.string.str_download_ing, true, true);
+                    AppBus.downloadFile(url, NetCommonDefine.PIZHU_PATH + File.separator, fileName, suf, false);
+                }
+            }
+        });
+        topicResAdapter.OnCommentClickListener((view, url, fileName, suf) -> {
+            if (!isFast()) return;
+            if (getContext() != null) {
+                String path = NetCommonDefine.PIZHU_PATH + File.separator + topicID + File.separator + fileName;
+                if (AppUtils.fileIsExists(path)) {
+                    openAndroidFile(path, getContext(), true);
+                } else {
+                    WaitDialog.CreateWaitDialog(getContext(), R.string.str_download_ing, true, true);
+                    AppBus.downloadFile(url, NetCommonDefine.PIZHU_PATH + File.separator + topicID, fileName, suf, true);
+                }
+            }
+        });
+        topicResAdapter.OnUploadClickListener((view, fileName) -> {
+            if (!isFast()) return;
+            if (getContext() != null) {
+                String deviceNum = SharePerfenceUtils.getInstance().getString("deviceNum", "deviceNum");
+                if (deviceNum.equals("deviceNum")) {
+                    return;
+                }
+                String path = NetCommonDefine.PIZHU_PATH + File.separator + topicID + File.separator + fileName;
+                if (AppUtils.fileIsExists(path)) {
+                    File file = new File(path);
+                    Map<String, String> map = new HashMap<>();
+                    map.put("deviceNum", deviceNum);
+                    map.put("fileName", getUploadName(path));
+                    map.put("type", "2");
+                    AppBus.upLoadSumm(2, file, AppUtils.getMimeType(file), map);
+                    WaitDialog.CreateWaitDialog(getContext(), R.string.str_upload_ing, true, false);
+                } else {
+
+                }
+            }
+        });
+    }
+
+    public void addTopicview() {
+        if (getContext() == null) return;
+        RadioGroup radioGroup = mView.findViewById(R.id.rg_topic);
+        Typeface iconfont = Typeface.createFromAsset(getContext().getAssets(), "iconfont/iconfont.ttf");
+        ArrayList<TopicBean> list = GlobalData.getInstance().getTopicList();
+        if (list.size() < 1) {
+            return;
+        }
+        int position = 0;
+        if (type.size() > 0) type.clear();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).isType()) {
+                RadioButton radioButton = (RadioButton) LayoutInflater.from(getContext()).inflate(R.layout.radio_button2, null);
+                radioButton.setButtonDrawable(android.R.color.transparent);//隐藏单选圆形按钮
+                String name = GlobalData.getInstance().getTopicList().get(i).getName();
+                radioButton.setTypeface(iconfont);
+                radioButton.setText(String.format(getResources().getString(R.string.icon_arrow), name));
+                radioButton.setId(position);
+                radioButton.setWidth(AppUtils.dp2px(getContext(), 200));
+                type.add(i);
+                position++;
+                radioGroup.addView(radioButton);
+            }
+        }
+        radioGroup.check(0);
+        if (type.size() < 1) {
+            WaitDialog.CancelWaitDialog();
+            return;
+        }
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (type.size() <= GlobalData.getInstance().getTopicList().size()) {
+                topicID = type.get(checkedId);
+                res_all.setActivated(true);
+                res_word.setActivated(false);
+                res_image.setActivated(false);
+                res_video.setActivated(false);
+                res_other.setActivated(false);
+                topicResAdapter.setAllList(GlobalData.getInstance().getTopicList().get(topicID).getFiles());
+            }
+        });
+        topicID = type.get(0);
+        setRecyclerView();
+    }
+
+
+    private void isNeedFresh() {
+        WaitDialog.CreateWaitDialog(getContext(), R.string.str_loading, true, true);
+        AppBus.getTopic();
+    }
+
+    private void openFile(boolean write) {
+        String path = GlobalData.getInstance().getFileSimpleBean().getPath();
+        if (getContext() == null || TextUtils.isEmpty(path)) return;
+        Log.i(TAG, "openFile: " + path);
+        openAndroidFile(path, getContext(), write);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public boolean isFast() {
+        boolean flag = false;
+        long curClickTime = System.currentTimeMillis();
+        if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+            flag = true;
+            lastClickTime = curClickTime;
+        }
+        return flag;
+    }
+
+    private void setListener() {
+        res_all.setOnClickListener(view -> {
+            res_all.setActivated(true);
+            res_word.setActivated(false);
+            res_image.setActivated(false);
+            res_video.setActivated(false);
+            res_other.setActivated(false);
+            if (type.size() > 0) {
+                topicResAdapter.setAllList(GlobalData.getInstance().getTopicList().get(topicID).getFiles());
+            }
+        });
+        res_word.setOnClickListener(view -> {
+            res_all.setActivated(false);
+            res_word.setActivated(true);
+            res_image.setActivated(false);
+            res_video.setActivated(false);
+            res_other.setActivated(false);
+            if (type.size() > 0) {
+                topicResAdapter.setWordList(GlobalData.getInstance().getTopicList().get(topicID).getFiles());
+            }
+        });
+        res_image.setOnClickListener(view -> {
+            res_all.setActivated(false);
+            res_word.setActivated(false);
+            res_image.setActivated(true);
+            res_video.setActivated(false);
+            res_other.setActivated(false);
+            if (type.size() > 0) {
+                topicResAdapter.setImageList(GlobalData.getInstance().getTopicList().get(topicID).getFiles());
+            }
+        });
+        res_video.setOnClickListener(view -> {
+            res_all.setActivated(false);
+            res_word.setActivated(false);
+            res_image.setActivated(false);
+            res_video.setActivated(true);
+            res_other.setActivated(false);
+            if (type.size() > 0) {
+                topicResAdapter.setVideoList(GlobalData.getInstance().getTopicList().get(topicID).getFiles());
+            }
+        });
+        res_other.setOnClickListener(view -> {
+            res_all.setActivated(false);
+            res_word.setActivated(false);
+            res_image.setActivated(false);
+            res_video.setActivated(false);
+            res_other.setActivated(true);
+            if (type.size() > 0) {
+                topicResAdapter.setOtherList(GlobalData.getInstance().getTopicList().get(topicID).getFiles());
+            }
+        });
+    }
+
+    /**
+     * 打开文件
+     *
+     * @param filepath 文件完整路径
+     * @param context
+     */
+    public void openAndroidFile(String filepath, Context context, boolean write) {
+        Intent handlerIntent = new Intent();
+        File file = new File(filepath);
+        handlerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //动作，查看
+        handlerIntent.setAction(Intent.ACTION_VIEW);
+        Uri uri = Uri.fromFile(file);
+        String type = getMimeType(file);
+        Log.i(TAG, "openAndroidFile: " + type);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (FileUtils.isOffice(AppUtils.getSuf(filepath)) && write) {
+                handlerIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            } else {
+                handlerIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+            uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
+            if (FileUtils.isOffice(AppUtils.getSuf(filepath)) && getContext() != null && FileUtils.isInstall(getContext(), "cn.wps.moffice_eng")) {
+                handlerIntent.setClassName("cn.wps.moffice_eng",
+                        "cn.wps.moffice.documentmanager.PreStartActivity2");
+                handlerIntent.setData(uri);
+                context.startActivity(han

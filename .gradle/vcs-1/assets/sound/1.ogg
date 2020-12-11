@@ -1,0 +1,348 @@
+package com.hengsheng.intellectconference.dialog;
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.clovsoft.smartclass.InteractManager;
+import com.clovsoft.smartclass.core.IRemoteControl;
+import com.clovsoft.smartclass.core.OnScreenshotListener;
+import com.hengsheng.intellectconference.App;
+import com.hengsheng.intellectconference.R;
+import com.hengsheng.intellectconference.activity.MainActivity;
+import com.hengsheng.intellectconference.activity.PaintActivity;
+import com.hengsheng.intellectconference.bean.EventBean;
+import com.hengsheng.intellectconference.http.NetCommonDefine;
+import com.hengsheng.intellectconference.util.EasyText;
+import com.hengsheng.intellectconference.util.GlobalData;
+import com.hengsheng.intellectconference.util.SharePerfenceUtils;
+import com.hengsheng.intellectconference.util.ToastHelper;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+
+import cn.hzw.doodle.DoodleParams;
+
+import static com.hengsheng.intellectconference.util.AppUtils.setTopApp;
+
+/**
+ * Created by yjf
+ * on 2020/9/2
+ */
+public class MyFloatDialog extends BaseFloatDialog {
+    private String TAG = "MyFloatDialog";
+    private Context context;
+    public static boolean isDeskTop = false;
+    private View logo;
+    private boolean isMaster;
+
+
+    public MyFloatDialog(Context context) {
+        super(context);
+        this.context = context;
+    }
+    private boolean isActivityTop(Class cls,Context context){
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        String name = manager.getRunningTasks(1).get(0).topActivity.getClassName();
+        return name.equals(cls.getName());
+    }
+    @Override
+    protected View getLeftView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+        View view = inflater.inflate(R.layout.layout_menu_left, null);
+        ImageView leftLogo = view.findViewById(R.id.logo);
+        leftLogo.setOnTouchListener(touchListener);
+        EasyText text1 = view.findViewById(R.id.easy1);
+        EasyText text2 = view.findViewById(R.id.easy2);
+        EasyText text3 = view.findViewById(R.id.easy3);
+        EasyText text4 = view.findViewById(R.id.easy4);
+        EasyText text5 = view.findViewById(R.id.easy5);
+        if(!GlobalData.getInstance().getStatusBean().isHandPz()){
+            text2.setVisibility(View.GONE);
+        }
+        if(!GlobalData.getInstance().getStatusBean().isWhitePz()){
+            text3.setVisibility(View.GONE);
+        }
+        isMaster = SharePerfenceUtils.getInstance().getBoolean("isMaster",false);
+        text1.setText(isMaster ? "投屏控制" : "退出投屏");
+        text5.setText("回到主页");
+        text1.setOnClickListener(v -> {
+            if(isMaster){
+                if(GlobalData.getInstance().getStatusBean().getRecvTouPin() > 1){
+                    EventBus.getDefault().post(new EventBean("EXITTOUPIN","EXITTOUPIN"));
+                }
+                if(isDeskTop){
+                    isDeskTop = false;
+                    setTopApp(context);
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(6);
+                }else {
+                    if(isActivityTop(MainActivity.class,context)){
+                        EventBus.getDefault().post(new EventBean("SHOWTOUPINGCON","SHOWTOUPINGCON"));
+                    }else {
+                        GlobalData.getInstance().getStatusBean().setTiaozhuan(6);
+                        Intent dialogIntent = new Intent(context, MainActivity.class);
+                        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        App.getInstance().startActivity(dialogIntent);
+                    }
+                }
+            }else {
+                if(GlobalData.getInstance().getStatusBean().getRecvTouPin() == 1){
+                    EventBus.getDefault().post(new EventBean("GUANBITOUPIN","YES"));
+                }else if(GlobalData.getInstance().getStatusBean().getRecvTouPin() == 2){
+                    EventBus.getDefault().post(new EventBean("EXITTOUPIN","EXITTOUPIN"));
+                }else {
+                    ToastHelper.showToast(getContext(),"当前没有投屏",0);
+                }
+
+            }
+
+        });
+        text2.setOnClickListener(v -> {
+            IRemoteControl remoteControl = InteractManager.getInstance().getRemoteControl();
+            if (remoteControl != null) {
+                //屏幕截图
+                remoteControl.screenshot(0, new OnScreenshotListener() {
+                    @Override
+                    public void onScreenshotStart() {
+                        new Handler(context.getMainLooper()).post(() -> {
+                            view.setVisibility(View.GONE);
+                        });
+                    }
+                    @Override
+                    public void onScreenshotResult(File file) {
+                        if (file != null) {
+                            DoodleParams params = new DoodleParams();
+                            params.mImagePath = file.getAbsolutePath();
+                            params.mSavePath = NetCommonDefine.FILE_PATH;
+                            params.mSavePathIsDir = true;
+                            PaintActivity.startActivityForResult(context, params);
+                            Log.i("screenshot", "截图成功：" + file.getAbsolutePath());
+                        } else {
+                            Log.e("screenshot", "截图失败");
+                        }
+                        new Handler(context.getMainLooper()).post(() -> {
+                            view.setVisibility(View.VISIBLE);
+                        });
+                    }
+                });
+            }
+        });
+
+        text3.setOnClickListener(v -> {
+            DoodleParams params = new DoodleParams();
+            params.mImagePath = "baiban";
+            params.mSavePath = NetCommonDefine.FILE_PATH;
+            params.mSavePathIsDir = true;
+            PaintActivity.startActivityForResult(context, params);
+        });
+
+        text4.setOnClickListener(v -> {
+            if(GlobalData.getInstance().getStatusBean().getRecvTouPin() == 0){
+                EventBus.getDefault().post(new EventBean("JIXUTOUPIN","YES"));
+            }
+        });
+
+        text5.setOnClickListener(v -> {
+//            if(isDeskTop){
+//                isDeskTop = false;
+                setTopApp(context);
+//            }else {
+//                isDeskTop = true;
+//                Intent home = new Intent(Intent.ACTION_MAIN);
+//                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+//                home.addCategory(Intent.CATEGORY_HOME);
+//                context.startActivity(home);
+//            }
+        });
+        return view;
+    }
+
+    @Override
+    protected View getRightView(LayoutInflater inflater, View.OnTouchListener touchListener) {
+        View view = inflater.inflate(R.layout.layout_menu_right, null);
+        ImageView rightLogo = view.findViewById(R.id.logo);
+        rightLogo.setOnTouchListener(touchListener);
+        EasyText text1 = view.findViewById(R.id.easy1);
+        EasyText text2 = view.findViewById(R.id.easy2);
+        EasyText text3 = view.findViewById(R.id.easy3);
+        EasyText text4 = view.findViewById(R.id.easy4);
+        EasyText text5 = view.findViewById(R.id.easy5);
+        if(!GlobalData.getInstance().getStatusBean().isHandPz()){
+            text2.setVisibility(View.GONE);
+        }
+        if(!GlobalData.getInstance().getStatusBean().isWhitePz()){
+            text3.setVisibility(View.GONE);
+        }
+        isMaster = SharePerfenceUtils.getInstance().getBoolean("isMaster",false);
+        text1.setText(isMaster ? "投屏控制" : "退出投屏");
+        text5.setText("回到主页");
+        text1.setOnClickListener(v -> {
+            if(isMaster){
+                if(GlobalData.getInstance().getStatusBean().getRecvTouPin() > 1){
+                    EventBus.getDefault().post(new EventBean("EXITTOUPIN","EXITTOUPIN"));
+                }
+                if(isDeskTop){
+                    isDeskTop = false;
+                    setTopApp(context);
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(6);
+                }else {
+                    if(isActivityTop(MainActivity.class,context)){
+                        EventBus.getDefault().post(new EventBean("SHOWTOUPINGCON","SHOWTOUPINGCON"));
+                    }else {
+                        GlobalData.getInstance().getStatusBean().setTiaozhuan(6);
+                        Intent dialogIntent = new Intent(context, MainActivity.class);
+                        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        App.getInstance().startActivity(dialogIntent);
+                    }
+                }
+            }else {
+                if(GlobalData.getInstance().getStatusBean().getRecvTouPin() == 1){
+                    EventBus.getDefault().post(new EventBean("GUANBITOUPIN","YES"));
+                }else if(GlobalData.getInstance().getStatusBean().getRecvTouPin() == 2){
+                    EventBus.getDefault().post(new EventBean("EXITTOUPIN","EXITTOUPIN"));
+                }else {
+                    ToastHelper.showToast(getContext(),"当前没有投屏",0);
+                }
+            }
+
+        });
+        text2.setOnClickListener(v -> {
+            IRemoteControl remoteControl = InteractManager.getInstance().getRemoteControl();
+            if (remoteControl != null) {
+                //屏幕截图
+                remoteControl.screenshot(0, new OnScreenshotListener() {
+                    @Override
+                    public void onScreenshotStart() {
+                        new Handler(context.getMainLooper()).post(() -> {
+                            view.setVisibility(View.GONE);
+                        });
+                    }
+                    @Override
+                    public void onScreenshotResult(File file) {
+                        if (file != null) {
+                            DoodleParams params = new DoodleParams();
+                            params.mImagePath = file.getAbsolutePath();
+                            params.mSavePath = NetCommonDefine.FILE_PATH;
+                            params.mSavePathIsDir = true;
+                            PaintActivity.startActivityForResult(context, params);
+                            Log.i("screenshot", "截图成功：" + file.getAbsolutePath());
+                        } else {
+                            Log.e("screenshot", "截图失败");
+                        }
+                        new Handler(context.getMainLooper()).post(() -> {
+                            view.setVisibility(View.VISIBLE);
+                        });
+                    }
+                });
+            }
+        });
+
+        text3.setOnClickListener(v -> {
+            DoodleParams params = new DoodleParams();
+            params.mImagePath = "baiban";
+            params.mSavePath = NetCommonDefine.FILE_PATH;
+            params.mSavePathIsDir = true;
+            PaintActivity.startActivityForResult(context, params);
+        });
+
+        text4.setOnClickListener(v -> {
+            if(GlobalData.getInstance().getStatusBean().getRecvTouPin() == 0){
+                EventBus.getDefault().post(new EventBean("JIXUTOUPIN","YES"));
+            }
+        });
+
+        text5.setOnClickListener(v -> {
+//            if(isDeskTop){
+//                isDeskTop = false;
+                setTopApp(context);
+//            }else {
+//                isDeskTop = true;
+//                Intent home = new Intent(Intent.ACTION_MAIN);
+//                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+//                home.addCategory(Intent.CATEGORY_HOME);
+//                context.startActivity(home);
+//            }
+        });
+        return view;
+    }
+
+    @Override
+    protected View getLogoView(LayoutInflater inflater) {
+        if(logo == null){
+            logo = inflater.inflate(R.layout.layout_menu_logo, null);
+        }
+        return inflater.inflate(R.layout.layout_menu_logo, null);
+    }
+
+    @Override
+    protected void resetLogoViewSize(int hintLocation, View logoView) {
+        logoView.clearAnimation();
+        logoView.setTranslationX(0);
+        logoView.setScaleX(1);
+        logoView.setScaleY(1);
+    }
+
+    @Override
+    protected void dragLogoViewOffset(View logoView, boolean isDraging, boolean isResetPosition, float offset) {
+        if (isDraging && offset > 0) {
+            logoView.setBackgroundDrawable(null);
+            logoView.setScaleX(1);
+            logoView.setScaleY(1);
+        } else {
+            logoView.setBackgroundResource(R.drawable.yw_game_float_menu_bg);
+            logoView.setTranslationX(0);
+            logoView.setScaleX(1);
+            logoView.setScaleY(1);
+        }
+
+
+        if (isResetPosition) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                logoView.setRotation(offset * 360);
+            }
+        } else {
+            logoView.setRotation(offset * 360);
+        }
+    }
+
+    @Override
+    public void shrinkLeftLogoView(View smallView) {
+        smallView.setTranslationX(-smallView.getWidth() / 3);
+    }
+
+    @Override
+    public void shrinkRightLogoView(View smallView) {
+        smallView.setTranslationX(smallView.getWidth() / 3);
+    }
+
+    @Override
+    public void leftViewOpened(View leftView) {
+    }
+
+    @Override
+    public void rightViewOpened(View rightView) {
+    }
+
+    @Override
+    public void leftOrRightViewClosed(View smallView) {
+    }
+
+    @Override
+    protected void onDestroyed() {
+        if(isApplicationDialog()){
+            if(getContext() instanceof Activity){
+                dismiss();
+            }
+        }
+    }
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

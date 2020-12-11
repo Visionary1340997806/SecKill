@@ -1,0 +1,403 @@
+new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // TODO Auto-generated method stub
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                menuAdapter_normal = new MenuAdapter(MainActivity.this, menuNormalArrayList, view.getMeasuredHeight() / 5.2f, false);
+                if (isMaster) {
+                    menuAdapter_master = new MenuAdapter(MainActivity.this, menuMasterArrayList, view.getMeasuredHeight() / 5.2f, true);
+                    mMenuMasterRV.setAdapter(menuAdapter_master);
+                    menuAdapter_master.setOnItemClickListener((v, position, id) -> {
+                        if (isFast(true, id)) {
+                            creatMasterFragment(id);
+                        }
+                    });
+                }
+                mMenuNormalRV.setAdapter(menuAdapter_normal);
+                menuAdapter_normal.setOnItemClickListener((v, position, id) -> {
+                    if (isFast(false, id)) {
+                        creatNomorFragment(id);
+                    }
+                });
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.fragment_container, new AgendaFragment());
+            }
+        });
+    }
+
+    private void setListener() {
+        if (isMaster) {
+            mSeatMaster.setOnClickListener(view -> seatChange(CommonDefine.SEAT_MASTER));
+        }
+        mSeatNormal.setOnClickListener(view -> seatChange(CommonDefine.SEAT_NORMAL));
+    }
+
+    private void seatChange(String choose) {
+        if (isMaster) {
+            if (choose.equals(CommonDefine.SEAT_MASTER)) {
+                mSeatMaster.setSelected(true);
+                mSeatNormal.setSelected(false);
+                mMenuMasterRV.setVisibility(View.VISIBLE);
+                mMenuNormalRV.setVisibility(View.INVISIBLE);
+            }
+            if (choose.equals(CommonDefine.SEAT_NORMAL)) {
+                mSeatMaster.setSelected(false);
+                mSeatNormal.setSelected(true);
+                mMenuMasterRV.setVisibility(View.INVISIBLE);
+                mMenuNormalRV.setVisibility(View.VISIBLE);
+            }
+        } else {
+        mSeatNormal.setSelected(true);
+        }
+
+    }
+
+    //防止误点多次网络请求
+    public boolean isFast(boolean b, int i) {
+        boolean flag = false;
+        long curClickTime = System.currentTimeMillis();
+        if (b) {
+            if (i == checkMasterID) {
+                if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+                    flag = true;
+                    lastClickTime = curClickTime;
+                }
+            } else {
+                checkMasterID = i;
+                flag = true;
+                lastClickTime = curClickTime;
+            }
+        } else {
+            if (i == checkNormalID) {
+                if ((curClickTime - lastClickTime) >= MIN_CLICK_DELAY_TIME) {
+                    flag = true;
+                    lastClickTime = curClickTime;
+                }
+            } else {
+                checkNormalID = i;
+                flag = true;
+                lastClickTime = curClickTime;
+            }
+        }
+
+        return flag;
+    }
+
+    private void creatNomorFragment(int id) {
+        switch (id) {
+            case 1:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new AgendaFragment())
+                        .commit();
+                break;
+            case 2:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new TopicResFragment())
+                        .commit();
+
+                break;
+            case 3:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SummaryFragment())
+                        .commit();
+                break;
+            case 4:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new ServiceFragment())
+                        .commit();
+                break;
+            case 5:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new UploadFragment())
+                        .commit();
+                break;
+            case 6:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new TempDataFragment())
+                        .commit();
+                break;
+            case 7:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SendFragment())
+                        .commit();
+                break;
+            case 8:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new VoteFragment())
+                        .commit();
+                break;
+            case 9:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new NotifyFragment())
+                        .commit();
+                break;
+            case 10:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SignFragment())
+                        .commit();
+                break;
+            case 11:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SignalConFragment())
+                        .commit();
+                break;
+            case 12:
+                showLoginDialog();
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    private void creatMasterFragment(int id) {
+        switch (id) {
+            case 1:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new ResConFragment())
+                        .commit();
+                break;
+            case 2:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new VoteConFragment())
+                        .commit();
+
+                break;
+            case 3:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SignalConFragment())
+                        .commit();
+                break;
+            case 4:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new MainConFragment())
+                        .commit();
+                break;
+            case 5:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new OnlineConFragment())
+                        .commit();
+                break;
+            case 6:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new ThemeConFragment())
+                        .commit();
+                break;
+            case 7:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new BackConFragment())
+                        .commit();
+                break;
+            case 8:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new SendConFragment())
+                        .commit();
+                break;
+        }
+    }
+
+    private File getWorkingDirectory() {
+        final String dirName = "ClovSDK";
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            return new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), dirName);
+        } else {
+            return new File(getFilesDir(), dirName);
+        }
+    }
+
+    private void setupSDK() {
+        InteractManager manager = InteractManager.getInstance();
+        manager.startService(
+                App.getInstance(),
+                getWorkingDirectory(),
+                "clovsdk_client",
+                new InteractManager.ServiceStateListener() {
+                    @Override
+                    public void onServiceStarted(InteractManager manager) {
+                        //注册自定义消息
+                        manager.registerEventHandler(new TestEventHandler());
+
+                        //设置客户端属于哪个小组
+                        manager.setClientGroupId(GlobalData.getInstance().getStatusBean().getMeetingID());
+                        //如果需要自动连接最后一次交互的服务端，使用下面代码
+//                        String address = InteractManager.getInstance().getLastServerAddress();
+//                        if (address != null) {
+//                            manager.connect(address, SERVER_PORT);
+//
+                        EventBus.getDefault().post(new EventBean("SDKOK", "SDKOK"));
+                        manager.setClientExceptionListener(throwable -> Log.e("客户端异常", throwable.getMessage() + ""));
+
+                        manager.setMediaStreamListener(new InteractManager.MediaStreamListener() {
+                            @Override
+                            public void onMediaStreamStart(@NonNull String source) {
+                                //播放流媒体
+                                //用户可根据实际需求自行定制播放器UI
+                                Intent intent = new Intent(MainActivity.this, MediaPlayerActivity.class);
+                                intent.putExtra(MediaPlayerActivity.ARG_DATA_SOURCE, source);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onMediaStreamStop(@NonNull String source) {
+
+                            }
+                        });
+                        Log.i(TAG, "onServiceStarted: ");
+                    }
+
+                    @Override
+                    public void onServiceStoped(InteractManager manager) {
+                        Log.i(TAG, "onServiceStoped: ");
+                    }
+                }
+        );
+    }
+
+    private void teardownSDK() {
+        InteractManager manager = InteractManager.getInstance();
+        manager.disconnect();
+//        manager.clearServerAddressHistory();
+        manager.stopService(App.getInstance());
+    }
+
+    private void setupListeners() {
+        InteractManager manager = InteractManager.getInstance();
+        manager.addClientStateListener(clientState);
+        manager.setMiracastStateListener(miracastState);
+    }
+
+    private void teardownListeners() {
+        InteractManager manager = InteractManager.getInstance();
+        manager.removeClientStateListener(clientState);
+        manager.setMiracastStateListener(null);
+    }
+
+    private final InteractManager.ClientStateListener clientState = new InteractManager.ClientStateListener() {
+
+        @Override
+        public void onClientConnected(String serverIp, String serverDeviceId) {
+            EventBus.getDefault().post(new EventBean("TOUPINGCONN_SUCC", "YES"));
+        }
+
+        @Override
+        public void onClientDisconnected(String serverIp) {
+            EventBus.getDefault().post(new EventBean("TOUPINGCONN_FAIL", "NO"));
+        }
+    };
+
+    private final InteractManager.MiracastStateListener miracastState = new InteractManager.MiracastStateListener() {
+
+        @Override
+        public void onMiracastStarted() {
+        }
+
+        @Override
+        public void onMiracastStoped() {
+
+        }
+    };
+
+    private void showVoteDialog(VoteBean bean) {
+        voteDialog = new VoteDialog(this, bean, (view, tags) -> {
+            AppBus.postVote(bean.getId(), tags);
+            WaitDialog.CreateWaitDialog(this, R.string.str_loading, true, true);
+        }).shown();
+        if (voteDialog.getWindow() != null) {
+            WindowManager.LayoutParams dialogParams = voteDialog.getWindow().getAttributes();
+            dialogParams.gravity = Gravity.CENTER;
+            dialogParams.width = (int) (this.getResources().getDisplayMetrics().widthPixels * 0.50);
+            dialogParams.dimAmount = 0.3f;
+            voteDialog.getWindow().setAttributes(dialogParams);
+            voteDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        MyFloatDialog.isDeskTop = false;
+        if (GlobalData.getInstance().getStatusBean().getTiaozhuan() >= 0) {
+            switch (GlobalData.getInstance().getStatusBean().getTiaozhuan()) {
+                case 1:
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(-1);
+                    Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    break;
+                case 2:
+                    AppBus.getVoteList();
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(-1);
+                    break;
+                case 3:
+                    Intent dialogIntent = new Intent(this, BiaoyuActivity.class);
+                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(dialogIntent);
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(-1);
+                    break;
+                case 4:
+                    creatNomorFragment(8);
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(-1);
+                    break;
+                case 5:
+                    creatNomorFragment(10);
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(-1);
+                    break;
+                case 6:
+                    creatMasterFragment(3);
+                    GlobalData.getInstance().getStatusBean().setTiaozhuan(-1);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupListeners();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        teardownListeners();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy: ");
+        EventBus.getDefault().unregister(this);
+        if (usbMassStorageDevice != null) {
+            usbMassStorageDevice.close();
+        }
+        screenManager.stopListen();
+        unregisterReceiver();
+        teardownSDK();
+        Intent intent = new Intent(getApplicationContext(), SocketService.class);
+        stopService(intent);
+    }
+
+
+}
+                                                                                                                                                                                                                           

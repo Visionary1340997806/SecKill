@@ -1,0 +1,338 @@
+package com.hengsheng.intellectconference.fragment;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.hengsheng.intellectconference.BuildConfig;
+import com.hengsheng.intellectconference.R;
+import com.hengsheng.intellectconference.activity.ImageLookActivity;
+import com.hengsheng.intellectconference.activity.PdfActivity;
+import com.hengsheng.intellectconference.adpter.SummAdapter;
+import com.hengsheng.intellectconference.bean.EventBean;
+import com.hengsheng.intellectconference.bean.SummArr.SummBean;
+import com.hengsheng.intellectconference.dialog.WaitDialog;
+import com.hengsheng.intellectconference.http.AppBus;
+import com.hengsheng.intellectconference.http.NetCommonDefine;
+import com.hengsheng.intellectconference.util.AppUtils;
+import com.hengsheng.intellectconference.util.FileUtils;
+import com.hengsheng.intellectconference.util.GlobalData;
+import com.hengsheng.intellectconference.util.ImageLoader;
+import com.hengsheng.intellectconference.util.SharePerfenceUtils;
+import com.hengsheng.intellectconference.util.ToastHelper;
+import com.previewlibrary.GPreviewBuilder;
+import com.previewlibrary.ZoomMediaLoader;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import static com.hengsheng.intellectconference.util.AppUtils.getMimeType;
+
+/**
+ * Created by yjf
+ * on 2020/8/3
+ */
+public class SummaryFragment extends BaseFragment {
+    private static final String TAG = "SummaryFragment";
+    private View mView;
+    private RadioGroup radioGroup;
+    private RecyclerView recyclerView;
+    private SummAdapter adapter;
+    private Button send;
+    private RelativeLayout relativeLayout;
+    private EditText editText;
+    private ArrayList<SummBean> mList = new ArrayList<>();
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void EventBus(EventBean bean) {
+        switch (bean.getMessage()) {
+            case "GETSUMM_SUCCESS":
+                setRecyclerView();
+                break;
+            case "GETSUMM_FAIL":
+                ToastHelper.showToast(getContext(), "获取会议纪要信息失败..." + bean.getTips(), 0);
+                break;
+            case "DOWNLOADFILE_FAIL":
+                ToastHelper.showToast(getContext(), "加载文件失败，请检查网络或ip是否有误", 0);
+                break;
+            case "DOWNLOADFILE_SUCCESS":
+                WaitDialog.CancelWaitDialog();
+                if (bean.getTips().equals("OTG")) {
+                } else {
+                    if (bean.getTips().equals("pdf") && getContext() != null) {
+                        String path = GlobalData.getInstance().getFileSimpleBean().getPath();
+                        Intent intent = new Intent(getContext(), PdfActivity.class);
+                        intent.putExtra("pdfpath", path);
+                        getContext().startActivity(intent);
+                    } else {
+                        openFile();
+                    }
+                }
+                break;
+            case "UPLOADSUMM_SUCCESS4":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(getContext(), "上传成功！", 0);
+                break;
+            case "UPLOADSUMM_FAIL4":
+                WaitDialog.CancelWaitDialog();
+                ToastHelper.showToast(getContext(), "上传失败..." + bean.getTips(), 0);
+                break;
+        }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (mView == null) {
+            mView = inflater.inflate(R.layout.fragment_summary, container, false);
+            EventBus.getDefault().register(this);
+            ZoomMediaLoader.getInstance().init(new ImageLoader());
+            initView();
+        } else {
+            ViewGroup parent = (ViewGroup) mView.getParent();
+            if (parent != null) {
+                parent.removeView(mView);
+            }
+        }
+
+        return mView;
+    }
+
+    private void initView() {
+        radioGroup = mView.findViewById(R.id.rg_summary);
+        addSummaryview();
+        recyclerView = mView.findViewById(R.id.rv_summary_list);
+        adapter = new SummAdapter(getContext(), mList);
+        RecyclerView.LayoutManager ma = new GridLayoutManager(getContext(), 4);
+        recyclerView.setLayoutManager(ma);
+        recyclerView.setItemAnimator(null);
+        recyclerView.setAdapter(adapter);
+        send = mView.findViewById(R.id.bt_hand_msg);
+        editText = mView.findViewById(R.id.et_hand_msg);
+        relativeLayout = mView.findViewById(R.id.rl_hand_msg);
+        loadList();
+    }
+
+    private void loadList() {
+        if (GlobalData.getInstance().getSummList() != null &&
+                GlobalData.getInstance().getSummList().size() > 0) {
+            setRecyclerView();
+        }
+        AppBus.getSummary();
+    }
+
+    private void setRecyclerView() {
+        adapter.setShouhuiList(GlobalData.getInstance().getSummList());
+        setListener();
+    }
+
+    private void setListener() {
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case 0:
+                    adapter.setShouhuiList(GlobalData.getInstance().getSummList());
+                    relativeLayout.setVisibility(View.GONE);
+                    break;
+                case 1:
+                    adapter.setBaibanList(GlobalData.getInstance().getSummList());
+                    relativeLayout.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    adapter.setPizhuList(GlobalData.getInstance().getSummList());
+                    relativeLayout.setVisibility(View.GONE);
+                    break;
+                case 3:
+                    adapter.setJiepinList(GlobalData.getInstance().getSummList());
+                    relativeLayout.setVisibility(View.GONE);
+                    break;
+                case 4:
+                    adapter.setShoudongList(GlobalData.getInstance().getSummList());
+                    relativeLayout.setVisibility(View.VISIBLE);
+                    break;
+            }
+        });
+
+        adapter.setOfficeClickListener((url, fileName, suf) -> {
+            if (getContext() != null) {
+                String path = NetCommonDefine.FILE_PATH + File.separator + fileName;
+                if (AppUtils.fileIsExists(path)) {
+                    if (suf.contains("pdf")) {
+                        Intent intent = new Intent(getContext(), PdfActivity.class);
+                        intent.putExtra("pdfpath", path);
+                        getContext().startActivity(intent);
+                    } else {
+                        openAndroidFile(path, getContext());
+                    }
+                } else {
+                    WaitDialog.CreateWaitDialog(getContext(), R.string.str_download_ing, true, true);
+                    AppBus.downloadFile(url, NetCommonDefine.FILE_PATH, fileName, suf, false);
+                }
+            }
+        });
+
+        adapter.setOnImgClickListener((viewList, pos, url) -> {
+            GPreviewBuilder.from(this)
+                    .to(ImageLookActivity.class)
+                    .setData(viewList)
+                    .setCurrentIndex(pos)
+                    .setSingleFling(true)//是否在黑屏区域点击返回
+                    .setDrag(true)//是否禁用图片拖拽返回
+                    .setType(GPreviewBuilder.IndicatorType.Dot)//指示器类型
+                    .start();//启动
+        });
+
+        send.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(editText.getText().toString().trim())) {
+                return;
+            }
+            String str = editText.getText().toString();
+            saveFile(str);
+            editText.setText("");
+        });
+    }
+
+
+    private void openFile() {
+        String path = GlobalData.getInstance().getFileSimpleBean().getPath();
+        if (getContext() == null || TextUtils.isEmpty(path)) return;
+        openAndroidFile(path, getContext());
+    }
+
+    private String getList(int i) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add(String.format(getResources().getString(R.string.icon_pizhu), "手绘批注"));
+        list.add(String.format(getResources().getString(R.string.icon_draw), "电子白板"));
+        list.add(String.format(getResources().getString(R.string.icon_pizhu_file), "批注文件"));
+        list.add(String.format(getResources().getString(R.string.icon_shot), "截屏资料"));
+        list.add(String.format(getResources().getString(R.string.icon_hand_write), "手动记录"));
+        return list.get(i);
+    }
+
+    public void addSummaryview() {
+        if (getContext() == null) return;
+        radioGroup = mView.findViewById(R.id.rg_summary);
+        for (int i = 0; i < 5; i++) {
+            RadioButton tempButton = (RadioButton) LayoutInflater.from(getContext()).inflate(R.layout.radio_button, null);
+            Typeface iconfont = Typeface.createFromAsset(getContext().getAssets(), "iconfont/iconfont.ttf");
+            tempButton.setTypeface(iconfont);
+            tempButton.setText(getList(i));
+            tempButton.setButtonDrawable(android.R.color.transparent);//隐藏单选圆形按钮
+            tempButton.setId(i);
+            radioGroup.addView(tempButton);
+        }
+        radioGroup.check(0);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    /**
+     * 打开文件
+     *
+     * @param filepath 文件完整路径
+     * @param context
+     */
+    public void openAndroidFile(String filepath, Context context) {
+        Intent handlerIntent = new Intent();
+        File file = new File(filepath);
+        handlerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //动作，查看
+        handlerIntent.setAction(Intent.ACTION_VIEW);
+        Uri uri = Uri.fromFile(file);
+        String type = getMimeType(file);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if(FileUtils.isOffice(AppUtils.getSuf(filepath))){
+                handlerIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION );
+            }else {
+                handlerIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION );
+            }
+            uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
+            if (FileUtils.isOffice(AppUtils.getSuf(filepath)) && getContext() != null && FileUtils.isInstall(getContext(), "cn.wps.moffice_eng")) {
+                handlerIntent.setClassName("cn.wps.moffice_eng",
+                        "cn.wps.moffice.documentmanager.PreStartActivity2");
+                handlerIntent.setData(uri);
+                context.startActivity(handlerIntent);
+            }else {
+                handlerIntent.setDataAndType(uri, type);
+                context.startActivity(handlerIntent);
+            }
+        } else {
+            handlerIntent.setDataAndType(uri, type);
+            context.startActivity(handlerIntent);
+        }
+    }
+
+    public void saveFile(String str) {
+        String filePath = null;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA).format(new Date());
+        String path = NetCommonDefine.FILE_PATH;
+        String name = null;
+        if (GlobalData.getInstance().getMeetingInfoBean() != null && GlobalData.getInstance().getMeetingInfoBean().getUser() != null) {
+            name = GlobalData.getInstance().getMeetingInfoBean().getUser().getUsername();
+        } else {
+            name = "无名";
+        }
+
+        filePath = path + File.separator + name + "_" + timeStamp + ".doc";
+
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                File dir = new File(file.getParent());
+                dir.mkdirs();
+                file.createNewFile();
+            }
+            FileOutputStream outStream = new FileOutputStream(file);
+            outStream.write(str.getBytes());
+            outStream.close();
+            upLoadHand(filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void upLoadHand(String filename) {
+        String deviceNum = SharePerfenceUtils.getInstance().getString("deviceNum", "deviceNum");
+        if (deviceNum.equals("deviceNum")) return;
+        File file = new File(filename);
+        Map<String, String> map = new HashMap<>();
+        map.put("deviceNum", deviceNum);
+        map.put("fileName", AppUtils.getAllName(filename));
+        map.put("type", "4");
+        AppBus.upLoadSumm(4, file, AppUtils.getMimeType(file), map);
+        WaitDialog.CreateWaitDialog(getContext(), R.string.str_upload_ing, true, true);
+    }
+
+}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

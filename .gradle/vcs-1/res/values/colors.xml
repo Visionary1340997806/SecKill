@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="yellow_d">#ff882908</color>
+    <color name="blue_d">#ff364370</color>
+    <color name="white">#a2999999</color>
+    <color name="black">#99000000</color>
+    <color name="white1">#ffffffff</color>
+    <color name="translent">#00ffffff</color>
+    <color name="yellow_l">#30c1b9fd</color>
+    <color name="green_y">#ff6e8848</color>
+    <color name="yellow_r">#fff4b240</color>
+    <color name="yellow_r_1">#00f4b240</color>
+    <color name="yellow_c">#ffd5fce6</color>
+    <color name="blue_l">#004b75ff</color>
+    <color name="blue_translent">#aa3195f3</color>
+    <color name="dack">#dd000000</color>
+</resources>

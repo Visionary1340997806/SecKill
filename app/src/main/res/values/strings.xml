@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SecKill</string>
+    <string name="toast_write_permission_denied">写数据权限被禁用！</string>
+    <string name="toast_camera_permission_denied">照相机权限被禁用！</string>
+</resources>

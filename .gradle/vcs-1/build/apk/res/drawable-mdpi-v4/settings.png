@@ -1,0 +1,450 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.hengsheng.intellectconference"
+4    android:versionCode="22"
+5    android:versionName="v2.2" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="28" />
+10
+11    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+11-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:5:5-79
+11-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:5:22-76
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:6:5-67
+12-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:6:22-64
+13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+13-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:7:5-75
+13-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:7:22-73
+14    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+14-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:8:5-75
+14-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:8:22-73
+15    <uses-permission android:name="android.permission.WAKE_LOCK" />
+15-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:9:5-67
+15-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:9:22-65
+16    <uses-permission android:name="android.permission.CAMERA" />
+16-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:10:5-64
+16-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:10:22-62
+17    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+17-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:11:5-80
+17-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:11:22-78
+18    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+18-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:12:5-79
+18-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:12:22-77
+19    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+19-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:13:5-75
+19-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:13:22-72
+20    <uses-permission
+20-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:14:5-90
+21        android:name="android.hardware.usb.host"
+21-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:14:22-62
+22        android:required="false" />
+22-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:14:63-87
+23    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+23-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:15:5-78
+23-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:15:22-75
+24    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+24-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:16:5-80
+24-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:16:22-77
+25    <uses-permission android:name="android.permission.REORDER_TASKS" />
+25-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:17:5-72
+25-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:17:22-69
+26    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
+26-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:18:5-19:47
+26-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:18:22-75
+27    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT" />
+27-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:12:5-79
+27-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:12:22-76
+28    <uses-permission android:name="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT" />
+28-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:13:5-86
+28-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:13:22-83
+29    <uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
+29-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:14:5-79
+29-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:14:22-76
+30    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+30-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:15:5-71
+30-->[clovsoftmedia_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5fa0750139f0794ac7a8949355613314\clovsoftmedia_v1.1.1\AndroidManifest.xml:15:22-68
+31    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+31-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:11:5-83
+31-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:11:22-80
+32    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+32-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:12:5-84
+32-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:12:22-81
+33    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+33-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:13:5-77
+33-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:13:22-74
+34    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> <!-- 在SDCard中创建与删除文件权限 -->
+34-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:14:5-75
+34-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:14:22-72
+35    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+35-->[com.github.1993hzw:Doodle:5.5.3] C:\Users\George\.gradle\caches\transforms-2\files-2.1\1ed817498f490c16df9462e2341039d0\Doodle-5.5.3\AndroidManifest.xml:12:5-84
+35-->[com.github.1993hzw:Doodle:5.5.3] C:\Users\George\.gradle\caches\transforms-2\files-2.1\1ed817498f490c16df9462e2341039d0\Doodle-5.5.3\AndroidManifest.xml:12:22-81
+36    <uses-permission android:name="android.permission.INSTALL_PACKAGES" />
+36-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:12:5-14:47
+36-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:13:9-59
+37
+38    <application
+38-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:21:5-106:19
+39        android:name="com.hengsheng.intellectconference.App"
+39-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:22:9-28
+40        android:allowBackup="true"
+40-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:23:9-35
+41        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+41-->[androidx.core:core:1.2.0-rc01] C:\Users\George\.gradle\caches\transforms-2\files-2.1\7aba7ff4d17754d5bebb26232f2a86cb\core-1.2.0-rc01\AndroidManifest.xml:24:18-86
+42        android:debuggable="true"
+43        android:icon="@drawable/ic_launcher"
+43-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:24:9-45
+44        android:installLocation="preferExternal"
+44-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:29:9-49
+45        android:label="@string/app_name"
+45-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:25:9-41
+46        android:requestLegacyExternalStorage="true"
+46-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:28:9-52
+47        android:roundIcon="@drawable/ic_launcher"
+47-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:26:9-50
+48        android:supportsRtl="true"
+48-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:27:9-35
+49        android:testOnly="true"
+50        android:theme="@style/AppTheme"
+50-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:31:9-40
+51        android:usesCleartextTraffic="true" >
+51-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:30:9-44
+52        <activity
+52-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:32:9-43:20
+53            android:name="com.hengsheng.intellectconference.activity.SplashActivity"
+53-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:32:19-58
+54            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+54-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:36:13-85
+55            android:screenOrientation="landscape"
+55-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:34:13-50
+56            android:theme="@style/AppTheme.StartingWindowTheme"
+56-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:33:13-64
+57            android:windowSoftInputMode="adjustNothing" >
+57-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:35:13-56
+58            <intent-filter>
+58-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:37:13-42:29
+59                <action android:name="android.intent.action.MAIN" />
+59-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:38:17-69
+59-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:38:25-66
+60                <action android:name="android.intent.action.VIEW" />
+60-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:39:17-68
+60-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:39:25-66
+61
+62                <category android:name="android.intent.category.LAUNCHER" />
+62-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:41:17-77
+62-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:41:27-74
+63            </intent-filter>
+64        </activity>
+65        <activity
+65-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:44:9-49:20
+66            android:name="com.hengsheng.intellectconference.activity.MainActivity"
+66-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:44:19-56
+67            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+67-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:48:13-85
+68            android:launchMode="singleTask"
+68-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:47:13-44
+69            android:screenOrientation="landscape"
+69-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:45:13-50
+70            android:windowSoftInputMode="adjustNothing" >
+70-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:46:13-56
+71        </activity>
+72        <activity
+72-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:50:9-53:20
+73            android:name="com.hengsheng.intellectconference.activity.BaseActivity"
+73-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:50:19-56
+74            android:windowSoftInputMode="adjustNothing" >
+74-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:51:13-56
+75        </activity>
+76        <activity
+76-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:54:9-57:20
+77            android:name="com.hengsheng.intellectconference.activity.UsbFileActivity"
+77-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:54:19-59
+78            android:launchMode="singleTop"
+78-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:55:13-43
+79            android:screenOrientation="landscape" >
+79-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:55:13-50
+80        </activity>
+81        <activity
+81-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:58:9-61:20
+82            android:name="com.hengsheng.intellectconference.activity.PaintActivity"
+82-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:58:19-57
+83            android:screenOrientation="landscape" >
+83-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:59:13-50
+84        </activity>
+85        <activity
+85-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:62:9-66:20
+86            android:name="com.hengsheng.intellectconference.activity.BiaoyuActivity"
+86-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:62:19-58
+87            android:launchMode="singleTop"
+87-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:64:13-43
+88            android:screenOrientation="landscape" >
+88-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:63:13-50
+89        </activity>
+90        <activity
+90-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:67:9-70:20
+91            android:name="com.hengsheng.intellectconference.activity.PdfActivity"
+91-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:67:19-55
+92            android:screenOrientation="landscape" >
+92-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:68:13-50
+93        </activity>
+94        <activity
+94-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:71:9-75:20
+95            android:name="com.hengsheng.intellectconference.activity.FaceSignActivity"
+95-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:71:19-60
+96            android:hardwareAccelerated="true"
+96-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:72:13-47
+97            android:screenOrientation="landscape" >
+97-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:73:13-50
+98        </activity>
+99        <activity
+99-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:76:9-79:72
+100            android:name="com.hengsheng.intellectconference.activity.MediaPlayerActivity"
+100-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:76:19-63
+101            android:configChanges="mcc|mnc|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode|layoutDirection|fontScale|locale"
+101-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:77:13-186
+102            android:screenOrientation="landscape"
+102-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:78:13-50
+103            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+103-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:79:13-69
+104        <activity
+104-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:81:9-83:87
+105            android:name="com.hengsheng.intellectconference.activity.ImageLookActivity"
+105-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:81:19-61
+106            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+106-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:83:13-85
+107            android:theme="@style/AppTheme.ImageTheme" />
+107-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:82:13-55
+108
+109        <provider
+110            android:name="androidx.core.content.FileProvider"
+110-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:87:13-62
+111            android:authorities="com.hengsheng.intellectconference.fileprovider"
+111-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:88:13-81
+112            android:exported="false"
+112-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:89:13-37
+113            android:grantUriPermissions="true" >
+113-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:90:13-47
+114            <meta-data
+114-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:91:13-94:19
+115                android:name="android.support.FILE_PROVIDER_PATHS"
+115-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:92:17-67
+116                android:resource="@xml/filepaths" />
+116-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:93:17-50
+117        </provider>
+118
+119        <service
+119-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:96:9-99:19
+120            android:name="com.hengsheng.intellectconference.util.SocketService"
+120-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:96:18-52
+121            android:enabled="true"
+121-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:97:13-35
+122            android:exported="true" >
+122-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:98:13-36
+123        </service>
+124
+125        <meta-data
+125-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:102:9-104:35
+126            android:name="HENGSHENG"
+126-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:103:13-37
+127            android:value="P002" />
+127-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:104:13-33
+128        <meta-data
+128-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:100:9-102:35
+129            android:name="design_width_in_dp"
+129-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:101:13-46
+130            android:value="1000" />
+130-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:102:13-33
+131        <meta-data
+131-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:103:9-105:34
+132            android:name="design_height_in_dp"
+132-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:104:13-47
+133            android:value="600" />
+133-->E:\work\android\IntellectConference\app\src\main\AndroidManifest.xml:105:13-32
+134
+135        <activity
+135-->[drawingview_v1.0.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5a233fc29380d8338ef165b980ed0403\jetified-drawingview_v1.0.1\AndroidManifest.xml:15:9-19:72
+136            android:name="com.clovsoft.drawing.DrawingPlayerActivity"
+136-->[drawingview_v1.0.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5a233fc29380d8338ef165b980ed0403\jetified-drawingview_v1.0.1\AndroidManifest.xml:16:13-70
+137            android:configChanges="mcc|mnc|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode|layoutDirection|fontScale|locale"
+137-->[drawingview_v1.0.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5a233fc29380d8338ef165b980ed0403\jetified-drawingview_v1.0.1\AndroidManifest.xml:17:13-186
+138            android:screenOrientation="sensorLandscape"
+138-->[drawingview_v1.0.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5a233fc29380d8338ef165b980ed0403\jetified-drawingview_v1.0.1\AndroidManifest.xml:18:13-56
+139            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+139-->[drawingview_v1.0.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\5a233fc29380d8338ef165b980ed0403\jetified-drawingview_v1.0.1\AndroidManifest.xml:19:13-69
+140
+141        <service
+141-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:24:9-31:19
+142            android:name="com.clovsoft.screenrecorder.ScreenRecorderService"
+142-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:25:13-77
+143            android:enabled="true"
+143-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:26:13-35
+144            android:exported="false" >
+144-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:27:13-37
+145            <intent-filter>
+145-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:28:13-30:29
+146                <action android:name="com.clovsoft.screenrecorder.ScreenRecorderService" />
+146-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:29:17-92
+146-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:29:25-89
+147            </intent-filter>
+148        </service>
+149        <service
+149-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:32:9-34:40
+150            android:name="com.clovsoft.smartclass.core.RemoteControlService"
+150-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:33:13-77
+151            android:exported="false" />
+151-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:34:13-37
+152
+153        <provider
+153-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:36:9-44:20
+154            android:name="com.clovsoft.smartclass.CFileProvider"
+154-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:37:13-65
+155            android:authorities="com.hengsheng.intellectconference.cfileprovider"
+155-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:38:13-65
+156            android:exported="false"
+156-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:39:13-37
+157            android:grantUriPermissions="true" >
+157-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:40:13-47
+158            <meta-data
+158-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:91:13-94:19
+159                android:name="android.support.FILE_PROVIDER_PATHS"
+159-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:92:17-67
+160                android:resource="@xml/core__file_paths_public" />
+160-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:93:17-50
+161        </provider>
+162
+163        <activity
+163-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:46:9-51:72
+164            android:name="com.clovsoft.smartclass.CameraActivity"
+164-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:47:13-66
+165            android:configChanges="orientation|screenSize"
+165-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:48:13-59
+166            android:launchMode="singleTop"
+166-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:49:13-43
+167            android:screenOrientation="behind"
+167-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:50:13-47
+168            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+168-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:51:13-69
+169        <activity
+169-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:52:9-57:72
+170            android:name="com.clovsoft.smartclass.RecordActivity"
+170-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:53:13-66
+171            android:configChanges="orientation|screenSize"
+171-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:54:13-59
+172            android:launchMode="singleTop"
+172-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:55:13-43
+173            android:screenOrientation="behind"
+173-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:56:13-47
+174            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+174-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:57:13-69
+175        <activity
+175-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:58:9-62:60
+176            android:name="com.clovsoft.smartclass.DismissKeyguardActivity"
+176-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:59:13-75
+177            android:launchMode="singleInstance"
+177-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:60:13-48
+178            android:screenOrientation="behind"
+178-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:61:13-47
+179            android:theme="@style/CoreTheme.Transparent" />
+179-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:62:13-57
+180        <activity
+180-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:63:9-69:60
+181            android:name="com.clovsoft.smartclass.core.ScreenshotActivity"
+181-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:64:13-75
+182            android:configChanges="mcc|mnc|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode|layoutDirection|fontScale|locale"
+182-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:65:13-186
+183            android:excludeFromRecents="true"
+183-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:66:13-46
+184            android:launchMode="singleInstance"
+184-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:67:13-48
+185            android:screenOrientation="behind"
+185-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:68:13-47
+186            android:theme="@style/CoreTheme.Transparent" />
+186-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:69:13-57
+187        <activity
+187-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:70:9-75:72
+188            android:name="com.clovsoft.smartclass.media.MediaPlayerActivity"
+188-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:71:13-77
+189            android:configChanges="mcc|mnc|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode|layoutDirection|fontScale|locale"
+189-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:72:13-186
+190            android:launchMode="singleTop"
+190-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:73:13-43
+191            android:screenOrientation="sensorLandscape"
+191-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:74:13-56
+192            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+192-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:75:13-69
+193        <activity
+193-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:76:9-82:60
+194            android:name="com.clovsoft.ik.compat.MediaProjectionActivity"
+194-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:77:13-74
+195            android:configChanges="mcc|mnc|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode|layoutDirection|fontScale|locale"
+195-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:78:13-186
+196            android:excludeFromRecents="true"
+196-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:79:13-46
+197            android:launchMode="singleInstance"
+197-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:80:13-48
+198            android:screenOrientation="behind"
+198-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:81:13-47
+199            android:theme="@style/CoreTheme.Transparent" />
+199-->[core_v1.1.1.aar] C:\Users\George\.gradle\caches\transforms-2\files-2.1\c515d069c3b01e9bb24a132ee5080ab7\jetified-core_v1.1.1\AndroidManifest.xml:82:13-57
+200        <activity
+200-->[com.github.1993hzw:Doodle:5.5.3] C:\Users\George\.gradle\caches\transforms-2\files-2.1\1ed817498f490c16df9462e2341039d0\Doodle-5.5.3\AndroidManifest.xml:17:9-19:97
+201            android:name="cn.hzw.doodle.DoodleActivity"
+201-->[com.github.1993hzw:Doodle:5.5.3] C:\Users\George\.gradle\caches\transforms-2\files-2.1\1ed817498f490c16df9462e2341039d0\Doodle-5.5.3\AndroidManifest.xml:18:13-56
+202            android:configChanges="screenSize|orientation|keyboardHidden|navigation|keyboard" />
+202-->[com.github.1993hzw:Doodle:5.5.3] C:\Users\George\.gradle\caches\transforms-2\files-2.1\1ed817498f490c16df9462e2341039d0\Doodle-5.5.3\AndroidManifest.xml:19:13-94
+203        <activity
+203-->[com.ycjiang:ImagePreview:2.3.5] C:\Users\George\.gradle\caches\transforms-2\files-2.1\963d35c58a70f6a9485bb10560467e6d\jetified-ImagePreview-2.3.5\AndroidManifest.xml:13:9-15:75
+204            android:name="com.previewlibrary.GPreviewActivity"
+204-->[com.ycjiang:ImagePreview:2.3.5] C:\Users\George\.gradle\caches\transforms-2\files-2.1\963d35c58a70f6a9485bb10560467e6d\jetified-ImagePreview-2.3.5\AndroidManifest.xml:14:13-63
+205            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+205-->[com.ycjiang:ImagePreview:2.3.5] C:\Users\George\.gradle\caches\transforms-2\files-2.1\963d35c58a70f6a9485bb10560467e6d\jetified-ImagePreview-2.3.5\AndroidManifest.xml:15:13-72
+206        <activity android:name="com.previewlibrary.GPVideoPlayerActivity" />
+206-->[com.ycjiang:ImagePreview:2.3.5] C:\Users\George\.gradle\caches\transforms-2\files-2.1\963d35c58a70f6a9485bb10560467e6d\jetified-ImagePreview-2.3.5\AndroidManifest.xml:16:9-77
+206-->[com.ycjiang:ImagePreview:2.3.5] C:\Users\George\.gradle\caches\transforms-2\files-2.1\963d35c58a70f6a9485bb10560467e6d\jetified-ImagePreview-2.3.5\AndroidManifest.xml:16:19-74
+207
+208        <service android:name="com.xuexiang.xupdate.service.DownloadService" />
+208-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:20:9-80
+208-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:20:18-77
+209
+210        <provider
+210-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:22:9-30:20
+211            android:name="com.xuexiang.xupdate.utils.UpdateFileProvider"
+211-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:23:13-73
+212            android:authorities="com.hengsheng.intellectconference.updateFileProvider"
+212-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:24:13-70
+213            android:exported="false"
+213-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:25:13-37
+214            android:grantUriPermissions="true" >
+214-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:26:13-47
+215            <meta-data
+215-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:91:13-94:19
+216                android:name="android.support.FILE_PROVIDER_PATHS"
+216-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:92:17-67
+217                android:resource="@xml/update_file_paths" />
+217-->E:\work\android\IntellectConference\app\src\P002\AndroidManifest.xml:93:17-50
+218        </provider>
+219
+220        <activity
+220-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:32:9-35:58
+221            android:name="com.xuexiang.xupdate.widget.UpdateDialogActivity"
+221-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:33:13-76
+222            android:configChanges="screenSize|keyboardHidden|orientation|keyboard"
+222-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:34:13-83
+223            android:theme="@style/XUpdate_DialogTheme" />
+223-->[com.github.xuexiangjys:XUpdate:2.0.2] C:\Users\George\.gradle\caches\transforms-2\files-2.1\05c675f46d1de08580789a24ef2b88ed\XUpdate-2.0.2\AndroidManifest.xml:35:13-55
+224
+225        <provider
+225-->[me.jessyan:autosize:1.2.1] C:\Users\George\.gradle\caches\transforms-2\files-2.1\9e9ad997746b91c6be2ca81527328d6b\jetified-autosize-1.2.1\AndroidManifest.xml:12:9-16:43
+226            android:name="me.jessyan.autosize.InitProvider"
+226-->[me.jessyan:autosize:1.2.1] C:\Users\George\.gradle\caches\transforms-2\files-2.1\9e9ad997746b91c6be2ca81527328d6b\jetified-autosize-1.2.1\AndroidManifest.xml:13:13-60
+227            android:authorities="com.hengsheng.intellectconference.autosize-init-provider"
+227-->[me.jessyan:autosize:1.2.1] C:\Users\George\.gradle\caches\transforms-2\files-2.1\9e9ad997746b91c6be2ca81527328d6b\jetified-autosize-1.2.1\AndroidManifest.xml:14:13-74
+228            android:exported="false"
+228-->[me.jessyan:autosize:1.2.1] C:\Users\George\.gradle\caches\transforms-2\files-2.1\9e9ad997746b91c6be2ca81527328d6b\jetified-autosize-1.2.1\AndroidManifest.xml:15:13-37
+229            android:multiprocess="true" />
+229-->[me.jessyan:autosize:1.2.1] C:\Users\George\.gradle\caches\transforms-2\files-2.1\9e9ad997746b91c6be2ca81527328d6b\jetified-autosize-1.2.1\AndroidManifest.xml:16:13-40
+230    </application>
+231
+232</manifest>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
